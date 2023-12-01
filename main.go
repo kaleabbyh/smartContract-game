@@ -56,92 +56,431 @@
 // 	fmt.Println("Status:", response.Status)
 // }
 
+// package main
+
+// import (
+// 	"encoding/xml"
+// 	"fmt"
+// )
+
+// type Envelope struct {
+// 	XMLName xml.Name `xml:"http://schemas.xmlsoap.org/soap/envelope/ Envelope"`
+// 	Body    Body
+// }
+
+// type Body struct {
+// 	RMTFundTransfer RMTFundTransfer `xml:"http://temenos.com/CBEREMITANCE RMTFundtransfer"`
+// }
+
+// type RMTFundTransfer struct {
+// 	WebRequestCommon WebRequestCommon
+// 	OfsFunction      OfsFunction
+// 	FundTransferType FUNDSTRANSFERCBEREMITANCEType `xml:"http://temenos.com/FUNDSTRANSFERCBEREMITANCE FUNDSTRANSFERCBEREMITANCEType"`
+// }
+
+// type WebRequestCommon struct {
+// 	Company  string
+// 	Password string
+// 	UserName string
+// }
+
+// type OfsFunction struct {
+// }
+
+// type FUNDSTRANSFERCBEREMITANCEType struct {
+// 	DEBITAMOUNT       string
+// 	DEBITTHEIRREF     string
+// 	CREDITTHEIRREF    string
+// 	CREDITACCTNO      string
+// 	CREDITCURRENCY    string
+// 	CREDITAMOUNT      string
+// 	CREDITVALUEDATE   string
+// 	RemitterName      string
+// 	BeneficiaryName   string
+// 	BENCUST           string
+// 	ORDCUST           string
+// }
+
+// func main() {
+// 	xmlContent := `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cber="http://temenos.com/CBEREMITANCE" xmlns:fun="http://temenos.com/FUNDSTRANSFERCBEREMITANCE">
+// 	<soapenv:Header/>
+// 	<soapenv:Body>
+// 	   <cber:RMTFundtransfer>
+// 		  <WebRequestCommon>
+// 			 <company/>
+// 			 <password>SamplePassword</password>
+// 			 <userName>SampleUser</userName>
+// 		  </WebRequestCommon>
+// 		  <OfsFunction>
+
+// 		  </OfsFunction>
+// 		  <fun:FUNDSTRANSFERCBEREMITANCEType id="">
+// 			 <fun:DEBITAMOUNT>1</fun:DEBITAMOUNT>
+// 			 <fun:DEBITTHEIRREF>123450216</fun:DEBITTHEIRREF>
+// 			 <fun:CREDITTHEIRREF></fun:CREDITTHEIRREF>
+// 			 <fun:CREDITACCTNO>1000263499216</fun:CREDITACCTNO>
+// 			 <fun:CREDITCURRENCY>ETB</fun:CREDITCURRENCY>
+// 			 <fun:CREDITAMOUNT></fun:CREDITAMOUNT>
+// 			 <fun:CREDITVALUEDATE></fun:CREDITVALUEDATE>
+// 			 <fun:RemitterName>ANDUALE</fun:RemitterName>
+// 			 <fun:BeneficiaryName>ABIY</fun:BeneficiaryName>
+// 			 <fun:BENCUST></fun:BENCUST>
+// 			 <fun:ORDCUST></fun:ORDCUST>
+// 		  </fun:FUNDSTRANSFERCBEREMITANCEType>
+// 	   </cber:RMTFundtransfer>
+// 	</soapenv:Body>
+// </soapenv:Envelope>`
+
+// 	var envelope Envelope
+// 	err := xml.Unmarshal([]byte(xmlContent), &envelope)
+// 	if err != nil {
+// 		fmt.Println("Failed to parse XML:", err)
+// 		return
+// 	}
+
+// 	// Access the extracted data
+// 	fmt.Println("Password:", envelope.Body.RMTFundTransfer.WebRequestCommon.Password)
+// 	fmt.Println("UserName:", envelope.Body.RMTFundTransfer.WebRequestCommon.UserName)
+// 	fmt.Println("DEBITAMOUNT:", envelope.Body.RMTFundTransfer.FundTransferType.DEBITAMOUNT)
+// 	fmt.Println("DEBITTHEIRREF:", envelope.Body.RMTFundTransfer.FundTransferType.DEBITTHEIRREF)
+// 	// Access other fields as needed
+// }
+
+// package main
+
+// import (
+// 	"errors"
+// 	"fmt"
+// 	"log"
+
+// 	"github.com/dgrijalva/jwt-go"
+// 	"github.com/labstack/echo/v4"
+// 	"github.com/labstack/echo/v4/middleware"
+// )
+
+// // Configuration struct for holding application configurations
+// type Configurations struct {
+// 	Auth struct {
+// 		MerchantSecret string
+// 	}
+// }
+
+// // CustomMerchantJWTClaims struct for custom JWT claims
+// type CustomMerchantJWTClaims struct {
+// 	jwt.StandardClaims
+// }
+
+// // Routes that don't require authentication
+// var routesThatDontNeedAuth = []string{
+// 	"/api/v1/public",
+// }
+
+// // Middleware to build merchant authentication
+// func BuildMerchantAuthMiddleware(config Configurations) echo.MiddlewareFunc {
+// 	signingKey := []byte(config.Auth.MerchantSecret)
+
+// 	conf := middleware.JWTConfig{
+// 		Claims: CustomMerchantJWTClaims{},
+// 		ParseTokenFunc: func(auth string, c echo.Context) (interface{}, error) {
+// 			keyFunc := func(t *jwt.Token) (interface{}, error) {
+// 				if t.Method.Alg() != "HS256" {
+// 					return nil, fmt.Errorf("unexpected JWT signing method=%v", t.Header["alg"])
+// 				}
+// 				return signingKey, nil
+// 			}
+
+// 			token, err := jwt.ParseWithClaims(auth, &CustomMerchantJWTClaims{}, keyFunc)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 			if !token.Valid {
+// 				return nil, errors.New("invalid token")
+// 			}
+// 			return token, nil
+// 		},
+// 		Skipper: func(c echo.Context) bool {
+// 			currentRoute := c.Request().URL.Path
+
+// 			for _, route := range routesThatDontNeedAuth {
+// 				if currentRoute == route {
+// 					return true
+// 				}
+// 			}
+
+// 			// Additional skipper logic can be added here for specific routes
+// 			// For example, admins routes can use a different middleware with a different secret
+// 			// if strings.HasPrefix(currentRoute, "/api/v1/admins") {
+// 			// 	return true
+// 			// }
+
+// 			return false
+// 		},
+// 	}
+
+// 	return middleware.JWTWithConfig(conf)
+// }
+
+// // Route handler for protected route
+// func ProtectedRouteHandler(c echo.Context) error {
+// 	user := c.Get("user")
+// 	token := user.(*jwt.Token)
+// 	claims := token.Claims.(*CustomMerchantJWTClaims)
+
+// 	return c.String(200, fmt.Sprintf("Protected route accessed by user: %s", claims.Subject))
+// }
+
+// func main() {
+// 	// Create an instance of the Echo router
+// 	e := echo.New()
+
+// 	// Configuration
+// 	config := Configurations{
+// 		Auth: struct {
+// 			MerchantSecret string
+// 		}{
+// 			MerchantSecret: "your_merchant_secret_key",
+// 		},
+// 	}
+
+// 	// Define your routes
+// 	merchantRoutes := e.Group("/api/v1/merchant")
+// 	merchantRoutes.Use(BuildMerchantAuthMiddleware(config))
+// 	merchantRoutes.GET("/protected", ProtectedRouteHandler)
+
+// 	// Start the server
+// 	log.Fatal(e.Start(":8080"))
+// }
+
+// package main
+
+// import "fmt"
+
+// func Check() {
+// 	Func1 := func() {
+// 		fmt.Println("call one")
+
+// 		// Define and initialize Func2 inline
+// 		Func2 := func () {
+// 			fmt.Println("func two")
+// 		}
+// 		Func2() // Call Func2 to print "func two"
+// 	}
+
+// 	Func1() // Call Func1 to print "call one" and "func two"
+// }
+
+// func main() {
+// 	Check()
+// }
+
+// package main
+
+// import (
+// 	"fmt"
+// 	"net/http"
+// 	"time"
+
+// 	"github.com/golang-jwt/jwt/v5"
+// 	echojwt "github.com/labstack/echo-jwt/v4"
+// 	"github.com/labstack/echo/v4"
+// 	"github.com/labstack/echo/v4/middleware"
+// )
+
+// // jwtCustomClaims are custom claims extending default ones.
+// // See https://github.com/golang-jwt/jwt for more examples
+// type jwtCustomClaims struct {
+// 	Name  string `json:"name"`
+// 	Admin bool   `json:"admin"`
+// 	jwt.RegisteredClaims
+// }
+
+// type LoginUser struct{
+// 	Username string `json:"username"`
+// 	Password string `json:"password"`
+// }
+
+// func accessible(c echo.Context) error {
+// 	return c.String(http.StatusOK, "Accessible")
+// }
+
+// func login(c echo.Context) error {
+// 	user:=new(LoginUser)
+
+// 	if err:=c.Bind(user); err!=nil{
+// 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request payload")
+// 	}
+
+// 	if user.Username != "jon" || user.Password != "shhh!" {
+// 		return echo.ErrUnauthorized
+// 	}
+
+// 	claims := &jwtCustomClaims{
+// 		"Jon Snow",
+// 		true,
+// 		jwt.RegisteredClaims{
+// 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 72)),
+// 		},
+// 	}
+
+// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+// 	fmt.Println("unsigned token: ",token)
+
+// 	t, err := token.SignedString([]byte("secret"))
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	fmt.Println("signed token: ",t)
+
+// 	return c.JSON(http.StatusOK, echo.Map{
+// 		"token": t,
+// 	})
+// }
+
+// func restricted(c echo.Context) error {
+// 	user := c.Get("user").(*jwt.Token)
+// 	fmt.Println("restricted/n")
+// 	claims := user.Claims.(*jwtCustomClaims)
+// 	name := claims.Name
+// 	return c.String(http.StatusOK, "Welcome "+name+"!")
+// }
+
+// func jwtMiddleware() echo.MiddlewareFunc {
+// 	config := echojwt.Config{
+// 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
+// 			return new(jwtCustomClaims)
+// 		},
+// 		SigningKey: []byte("secret"),
+// 	}
+
+// 	return echojwt.WithConfig(config)
+// }
+
+// func main() {
+// 	e := echo.New()
+// 	e.Use(middleware.Recover())
+
+// 	e.POST("/login", login)
+// 	e.GET("/", accessible)
+
+// 	r := e.Group("/restricted")
+// 	r.Use(jwtMiddleware())
+// 	r.GET("/", restricted)
+
+// 	e.Logger.Fatal(e.Start(":1323"))
+// }
+
+// package main
+
+// import (
+// 	"context"
+// 	"errors"
+// 	"fmt"
+// 	"net/http"
+
+// 	echojwt "github.com/labstack/echo-jwt/v4"
+
+// 	"github.com/golang-jwt/jwt/v5"
+// 	"github.com/labstack/echo/v4"
+// 	"github.com/labstack/echo/v4/middleware"
+// 	"github.com/lestrrat-go/jwx/jwk"
+// )
+
+// func getKey(token *jwt.Token) (interface{}, error) {
+
+// 	keySet, err := jwk.Fetch(context.Background(), "https://www.googleapis.com/oauth2/v3/certs")
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	keyID, ok := token.Header["kid"].(string)
+// 	if !ok {
+// 		return nil, errors.New("expecting JWT header to have a key ID in the kid field")
+// 	}
+
+// 	key, found := keySet.LookupKeyID(keyID)
+
+// 	if !found {
+// 		return nil, fmt.Errorf("unable to find key %q", keyID)
+// 	}
+
+// 	var pubkey interface{}
+// 	if err := key.Raw(&pubkey); err != nil {
+// 		return nil, fmt.Errorf("unable to get the public key. Error: %s", err.Error())
+// 	}
+
+// 	return pubkey, nil
+// }
+
+// func accessible(c echo.Context) error {
+// 	return c.String(http.StatusOK, "Accessible")
+// }
+
+// func restricted(c echo.Context) error {
+// 	user := c.Get("user").(*jwt.Token)
+// 	claims := user.Claims.(jwt.MapClaims)
+// 	name := claims["name"].(string)
+// 	return c.String(http.StatusOK, "Welcome "+name+"!")
+// }
+
+// func main() {
+// 	e := echo.New()
+
+// 	// Middleware
+// 	e.Use(middleware.Logger())
+// 	e.Use(middleware.Recover())
+
+// 	// Unauthenticated route
+// 	e.GET("/", accessible)
+
+// 	// Restricted group
+// 	r := e.Group("/restricted")
+// 	{
+// 		config := echojwt.Config{
+// 			KeyFunc: getKey,
+// 		}
+// 		r.Use(echojwt.WithConfig(config))
+// 		r.GET("", restricted)
+// 	}
+
+// 	e.Logger.Fatal(e.Start(":1323"))
+// }
+
 package main
 
 import (
-	"encoding/xml"
-	"fmt"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
-type Envelope struct {
-	XMLName xml.Name `xml:"http://schemas.xmlsoap.org/soap/envelope/ Envelope"`
-	Body    Body
-}
-
-type Body struct {
-	RMTFundTransfer RMTFundTransfer `xml:"http://temenos.com/CBEREMITANCE RMTFundtransfer"`
-}
-
-type RMTFundTransfer struct {
-	WebRequestCommon WebRequestCommon
-	OfsFunction      OfsFunction
-	FundTransferType FUNDSTRANSFERCBEREMITANCEType `xml:"http://temenos.com/FUNDSTRANSFERCBEREMITANCE FUNDSTRANSFERCBEREMITANCEType"`
-}
-
-type WebRequestCommon struct {
-	Company  string
-	Password string
-	UserName string
-}
-
-type OfsFunction struct {
-}
-
-type FUNDSTRANSFERCBEREMITANCEType struct {
-	DEBITAMOUNT       string
-	DEBITTHEIRREF     string
-	CREDITTHEIRREF    string
-	CREDITACCTNO      string
-	CREDITCURRENCY    string
-	CREDITAMOUNT      string
-	CREDITVALUEDATE   string
-	RemitterName      string
-	BeneficiaryName   string
-	BENCUST           string
-	ORDCUST           string
+func customSkipper(c echo.Context) bool {
+	// Skip requests with "/skip" in the URL path
+	
+		return c.Request().URL.Path == "/skip"
+	
 }
 
 func main() {
-	xmlContent := `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cber="http://temenos.com/CBEREMITANCE" xmlns:fun="http://temenos.com/FUNDSTRANSFERCBEREMITANCE">
-	<soapenv:Header/>
-	<soapenv:Body>
-	   <cber:RMTFundtransfer>
-		  <WebRequestCommon>
-			 <company/>
-			 <password>SamplePassword</password>
-			 <userName>SampleUser</userName>
-		  </WebRequestCommon>
-		  <OfsFunction>
-		   
-		  </OfsFunction>
-		  <fun:FUNDSTRANSFERCBEREMITANCEType id="">
-			 <fun:DEBITAMOUNT>1</fun:DEBITAMOUNT>
-			 <fun:DEBITTHEIRREF>123450216</fun:DEBITTHEIRREF>
-			 <fun:CREDITTHEIRREF></fun:CREDITTHEIRREF>
-			 <fun:CREDITACCTNO>1000263499216</fun:CREDITACCTNO>
-			 <fun:CREDITCURRENCY>ETB</fun:CREDITCURRENCY>
-			 <fun:CREDITAMOUNT></fun:CREDITAMOUNT>
-			 <fun:CREDITVALUEDATE></fun:CREDITVALUEDATE>            
-			 <fun:RemitterName>ANDUALE</fun:RemitterName>
-			 <fun:BeneficiaryName>ABIY</fun:BeneficiaryName>
-			 <fun:BENCUST></fun:BENCUST>
-			 <fun:ORDCUST></fun:ORDCUST>
-		  </fun:FUNDSTRANSFERCBEREMITANCEType>
-	   </cber:RMTFundtransfer>
-	</soapenv:Body>
-</soapenv:Envelope>`
+	e := echo.New()
 
-	var envelope Envelope
-	err := xml.Unmarshal([]byte(xmlContent), &envelope)
-	if err != nil {
-		fmt.Println("Failed to parse XML:", err)
-		return
-	}
+	// Middleware
+	e.Use(middleware.Logger())
+	// Use the custom skipper
+	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
+		Skipper: customSkipper,
+	}))
 
-	// Access the extracted data
-	fmt.Println("Password:", envelope.Body.RMTFundTransfer.WebRequestCommon.Password)
-	fmt.Println("UserName:", envelope.Body.RMTFundTransfer.WebRequestCommon.UserName)
-	fmt.Println("DEBITAMOUNT:", envelope.Body.RMTFundTransfer.FundTransferType.DEBITAMOUNT)
-	fmt.Println("DEBITTHEIRREF:", envelope.Body.RMTFundTransfer.FundTransferType.DEBITTHEIRREF)
-	// Access other fields as needed
+	// Routes
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World!")
+	})
+
+	e.GET("/skip", func(c echo.Context) error {
+		return c.String(http.StatusOK, "This request is skipped!")
+	})
+
+	// Start the server
+	e.Logger.Fatal(e.Start(":1323"))
 }
