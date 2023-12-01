@@ -443,44 +443,124 @@
 // 		r.GET("", restricted)
 // 	}
 
-// 	e.Logger.Fatal(e.Start(":1323"))
+//		e.Logger.Fatal(e.Start(":1323"))
+//	}
+
+// package main
+
+// import (
+// 	"net/http"
+
+// 	"github.com/labstack/echo/v4"
+// 	"github.com/labstack/echo/v4/middleware"
+// )
+
+// func customSkipper(c echo.Context) bool {
+// 	return c.Request().URL.Path == "/skip"
+// }
+
+// func main() {
+// 	e := echo.New()
+
+// 	// Middleware
+// 	// Use the custom skipper with the Logger middleware
+// 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+// 		Skipper: customSkipper,
+// 	}))
+
+// 	// Routes
+// 	e.GET("/", func(c echo.Context) error {
+// 		return c.String(http.StatusOK, "Hello, World!")
+// 	})
+
+// 	e.GET("/skip", func(c echo.Context) error {
+// 		return c.String(http.StatusOK, "This request is skipped!")
+// 	})
+
+// 	// Start the server
+// 	e.Start(":1323")
 // }
 
 package main
 
 import (
 	"net/http"
+	"strconv"
+	"sync"
+	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
-func customSkipper(c echo.Context) bool {
-	// Skip requests with "/skip" in the URL path
+type (
+	Stats struct {
+		Uptime       time.Time      `json:"uptime"`
+		RequestCount uint64         `json:"requestCount"`
+		Statuses     map[string]int `json:"statuses"`
+		mutex        sync.RWMutex
+	}
 	
-		return c.Request().URL.Path == "/skip"
-	
+)
+
+func NewStats() *Stats {
+	return &Stats{
+		Uptime:   time.Now(),
+		Statuses: map[string]int{},
+	}
+}
+
+// Process is the middleware function.
+func (s *Stats) Process(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		if err := next(c); err != nil {
+			c.Error(err)
+		}
+		s.mutex.Lock()
+		defer s.mutex.Unlock()
+		s.RequestCount++
+		status := strconv.Itoa(c.Response().Status)
+		s.Statuses[status]++
+		return nil
+	}
+}
+
+// Handle is the endpoint to get stats.
+func (s *Stats) Handle(c echo.Context) error {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+	return c.JSON(http.StatusOK, s)
+}
+
+// ServerHeader middleware adds a `Server` header to the response.
+func ServerHeader(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		c.Response().Header().Set(echo.HeaderServer, "Echo/3.0")
+		return next(c)
+	}
 }
 
 func main() {
 	e := echo.New()
 
-	// Middleware
-	e.Use(middleware.Logger())
-	// Use the custom skipper
-	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
-		Skipper: customSkipper,
-	}))
+	// Debug mode
+	e.Debug = true
 
-	// Routes
+	//-------------------
+	// Custom middleware
+	//-------------------
+	// Stats
+	s := NewStats()
+	e.Use(s.Process)
+	e.GET("/stats", s.Handle) // Endpoint to get stats
+
+	// Server header
+	e.Use(ServerHeader)
+
+	// Handler
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	e.GET("/skip", func(c echo.Context) error {
-		return c.String(http.StatusOK, "This request is skipped!")
-	})
-
-	// Start the server
+	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
 }
