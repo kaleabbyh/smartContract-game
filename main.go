@@ -565,45 +565,144 @@
 // 	e.Logger.Fatal(e.Start(":1323"))
 // }
 
+// package main
+
+// import (
+// 	"net/http"
+
+// 	"github.com/go-playground/validator"
+// 	"github.com/labstack/echo/v4"
+// )
+
+// type (
+//   User struct {
+//     Name  string `json:"name" validate:"required"`
+//     Email string `json:"email" validate:"required,email"`
+//   }
+
+//   CustomValidator struct {
+//     validator *validator.Validate
+//   }
+// )
+
+// func (cv *CustomValidator) Validate(i interface{}) error {
+//   if err := cv.validator.Struct(i); err != nil {
+//        return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+//   }
+//   return nil
+// }
+
+// func BeforeResponse(c echo.Context) error {
+// 	c.Response().Before(func() {
+// 	  println("before response")
+// 	})
+// 	c.Response().After(func() {
+// 	  println("after response")
+// 	})
+// 	return c.JSON(http.StatusOK,"succcessful")
+//   }
+
+// func main() {
+//   e := echo.New()
+//   e.GET("/check",BeforeResponse)
+// //   e.Validator = &CustomValidator{validator: validator.New()}
+// //   e.POST("/users", func(c echo.Context) (err error) {
+// //     u := new(User)
+// //     if err = c.Bind(u); err != nil {
+// //       return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+// //     }
+// //     if err = c.Validate(u); err != nil {
+// //       return err
+// //     }
+// //     return c.JSON(http.StatusOK, u)
+// //   })
+//   e.Logger.Fatal(e.Start(":1323"))
+// }
+
+// package main
+
+// import (
+// 	"html/template"
+// 	"io"
+// 	"net/http"
+
+// 	"github.com/labstack/echo/v4"
+// )
+
+// // TemplateRenderer is a custom html/template renderer for Echo framework
+// type TemplateRenderer struct {
+// 	templates *template.Template
+// }
+
+// // Render renders a template document
+// func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+
+// 	// Add global methods if data is a map
+// 	if viewContext, isMap := data.(map[string]interface{}); isMap {
+// 		viewContext["reverse"] = c.Echo().Reverse
+// 	}
+
+// 	return t.templates.ExecuteTemplate(w, name, data)
+// }
+
+// func main() {
+//   e := echo.New()
+//   renderer := &TemplateRenderer{
+//       templates: template.Must(template.ParseGlob("*.html")),
+//   }
+//   e.Renderer = renderer
+
+//   // Named route "foobar"
+//   e.GET("/something", func(c echo.Context) error {
+//       return c.Render(http.StatusOK, "template.html", map[string]interface{}{
+//           "name": "Dolly!",
+//       })
+//   }).Name = "foobar"
+
+//   e.Logger.Fatal(e.Start(":8000"))
+// }
+
 package main
 
 import (
+	"fmt"
 	"net/http"
 
-	"github.com/go-playground/validator"
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 )
 
-type (
-  User struct {
-    Name  string `json:"name" validate:"required"`
-    Email string `json:"email" validate:"required,email"`
-  }
+type User struct {
+	Name  string `json:"name" form:"name"`
+	Email string `json:"email" form:"email"`
+}
 
-  CustomValidator struct {
-    validator *validator.Validate
-  }
-)
+type Handler struct {
+	db map[string]*User
+}
 
-func (cv *CustomValidator) Validate(i interface{}) error {
-  if err := cv.validator.Struct(i); err != nil {
-       return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-  }
-  return nil
+func (h *Handler) CreateUser(c echo.Context) error {
+    u := new(User)
+    if err := c.Bind(u); err != nil {
+        return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+    }
+
+    validator := validator.New()
+    if err := validator.Struct(u); err != nil {
+		fmt.Println("error")
+        return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+    }
+
+    h.db[u.Email] = u
+
+    return c.JSON(http.StatusOK, u)
 }
 
 func main() {
-  e := echo.New()
-  e.Validator = &CustomValidator{validator: validator.New()}
-  e.POST("/users", func(c echo.Context) (err error) {
-    u := new(User)
-    if err = c.Bind(u); err != nil {
-      return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-    }
-    if err = c.Validate(u); err != nil {
-      return err
-    }
-    return c.JSON(http.StatusOK, u)
-  })
-  e.Logger.Fatal(e.Start(":1323"))
+	e := echo.New()
+	h := &Handler{
+		db: make(map[string]*User),
+	}
+	e.POST("/users", h.CreateUser)
+	e.Logger.Fatal(e.Start(":1323"))
 }
