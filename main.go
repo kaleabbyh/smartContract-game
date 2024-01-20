@@ -645,22 +645,22 @@
 // 	return t.templates.ExecuteTemplate(w, name, data)
 // }
 
-// func main() {
-//   e := echo.New()
-//   renderer := &TemplateRenderer{
-//       templates: template.Must(template.ParseGlob("*.html")),
-//   }
-//   e.Renderer = renderer
+func main() {
+  e := echo.New()
+  renderer := &TemplateRenderer{
+      templates: template.Must(template.ParseGlob("*.html")),
+  }
+  e.Renderer = renderer
 
-//   // Named route "foobar"
-//   e.GET("/something", func(c echo.Context) error {
-//       return c.Render(http.StatusOK, "template.html", map[string]interface{}{
-//           "name": "Dolly!",
-//       })
-//   }).Name = "foobar"
+  // Named route "foobar"
+  e.GET("/something", func(c echo.Context) error {
+      return c.Render(http.StatusOK, "template.html", map[string]interface{}{
+          "name": "Dolly!",
+      })
+  }).Name = "foobar"
 
-//   e.Logger.Fatal(e.Start(":8000"))
-// }
+  e.Logger.Fatal(e.Start(":8000"))
+}
 
 package main
 
