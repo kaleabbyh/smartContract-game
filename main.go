@@ -17,19 +17,7 @@
 // 	Status           string
 // }
 
-// func (airtimeAdapter AirtimeAdapter) BuyAirtime(request PrepaidPackageRequest) (*PrepaidPackageResponse, error) {
-// 	// Perform the necessary operations and return the response and error, if any
 
-// 	// Simulate generating a confirmation code
-// 	confirmationCode := "ABC123"
-
-// 	response := &PrepaidPackageResponse{
-// 		ConfirmationCode: confirmationCode,
-// 		Status:           "Success",
-// 	}
-
-// 	return response, nil
-// }
 
 
 // package main
