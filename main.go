@@ -31,30 +31,7 @@
 // 	return response, nil
 // }
 
-// func main() {
-// 	// Create an instance of AirtimeAdapter
-// 	adapter := AirtimeAdapter{
-// 		Name:  "John Doe",
-// 		Email: "johndoe@example.com",
-// 	}
 
-// 	// Create an instance of PrepaidPackageRequest
-// 	request := PrepaidPackageRequest{
-// 		PhoneNumber: "1234567890",
-// 		Amount:      25.0,
-// 	}
-
-// 	// Call the BuyAirtime function on the AirtimeAdapter instance
-// 	response, err := adapter.BuyAirtime(request)
-// 	if err != nil {
-// 		fmt.Println("Error:", err)
-// 		return
-// 	}
-
-// 	// Access the fields of the PrepaidPackageResponse struct
-// 	fmt.Println("Confirmation Code:", response.ConfirmationCode)
-// 	fmt.Println("Status:", response.Status)
-// }
 
 // package main
 
