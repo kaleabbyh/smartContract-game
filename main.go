@@ -125,27 +125,7 @@
 // 	log.Fatal(e.Start(":8080"))
 // }
 
-package main
 
-import "fmt"
-
-func Check() {
-	Func1 := func() {
-		fmt.Println("call one")
-
-		// Define and initialize Func2 inline
-		Func2 := func () {
-			fmt.Println("func two")
-		}
-		Func2() // Call Func2 to print "func two"
-	}
-
-	Func1() // Call Func1 to print "call one" and "func two"
-}
-
-func main() {
-	Check()
-}
 
 // package main
 
