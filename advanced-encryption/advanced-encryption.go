@@ -1,11 +1,14 @@
-package main-two
+package advanced_encryption
 
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"crypto/sha256"
 
+	"github.com/joho/godotenv"
+	"github.com/rs/zerolog/log"
 	"github.com/square/go-jose"
 
 	"golang.org/x/crypto/hkdf"
@@ -23,7 +26,7 @@ func GetDerivedEncryptionKey(keyMaterial, salt string) ([]byte, error) {
 	return key, nil
 }
 
-func decodeAndDecryptToken(encodedJWT string, encryptionSecret []byte) ([]byte, error) {
+func DecodeAndDecryptToken(encodedJWT string, encryptionSecret []byte) ([]byte, error) {
 	object, err := jose.ParseEncrypted(encodedJWT)
 	if err != nil {
 		return nil, err
@@ -37,12 +40,18 @@ func decodeAndDecryptToken(encodedJWT string, encryptionSecret []byte) ([]byte, 
 	return payload, nil
 }
 
-func main() {
+func CheckToken() {
+	var logger = log.Logger.With().Str("func", "Configs").Logger()
+
+	if err := godotenv.Load(); err != nil {
+		logger.Error().Err(err).Msg("Error loading .env file:")
+	}
+	AccessToken := os.Getenv("TOKEN")
 
 	var encryptionSecret, err = GetDerivedEncryptionKey(NEXTAUTH_SECRET, "")
-	encodedJWT := "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..sYThWdGn2TTSa6SD.6ZVQQiSa6BVjgfIRUhKTuQDLTd5H96poHL4it986jqnNveyTpQ-pDvGZUKu0Eu7NgUd3FjU66FNj8uMH-3v9hyVe-leG4Hmin_YVmslOzQAOT-gQUL1KMFqT7FOOlPw47dbiVPhDDlhIl2wzTKxT1e7XsvZWgUp4RDZpd9u2ll6EKJQOCSEDB4OwuUam5TvqUgzWhyQnaeQxLTIk4iRxgLjFpb5rLRLEKn44P2yD6WvhPqg00cBFd2kJb93c21onAzsLziMA0QATb-P2wsIcSbD_UotpjUZKIkjbQiPvAJjEIIzpacT9FB35PrVTsLyMz57A83khOcLYrUhxOhSfnDXiE3RvDQC1hp9qqJ9U7I7RAO_Z2IA_YWdVHvriGiZpIffqbrQ5qtZ0m7dHCXZdRp9FQIPsSl8vjzonsCkXptvY0RyyyY0_xpFYV-GxgwAuWHenrOyCdQLEk9DIx3Vh1hGV4oxFEoZKNBfHd6oZI70IMQd7AJ-m9t_be0ge_C79svojN6v9ZJ1quINfl3gHK6WmGh8Qu_LjWBrKWwaDeRtz6JMcBhsrQSks1mwO0TBDj1z4Sg.nZucSw8tooCREUJ1az2_EQ"
+	encodedJWT := AccessToken
 
-	decryptedPayload, err := decodeAndDecryptToken(encodedJWT, encryptionSecret)
+	decryptedPayload, err := DecodeAndDecryptToken(encodedJWT, encryptionSecret)
 	if err != nil {
 		fmt.Println("Error decoding and decrypting token:", err)
 		return
