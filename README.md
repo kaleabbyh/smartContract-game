@@ -19,21 +19,17 @@
 * 1 - Clone project
 * 2 - add .env file on main directory
 * 3 - add values for envirnment variable on .env file
-    # Replace with your db credentials
+
     * DB_URL=
-    
-    #### 
+
     * SECRET_KEY=
     * NEXTAUTH_SECRET=
 
-    # Keystore password and public address
     * PASSWORD=
     * Admin=
 
-    # For test scripts
     * ADMIN_TOKEN=
     * USER_TOKEN=
-
 
 # Install if package is not installed
 * 1 - cd main directory
