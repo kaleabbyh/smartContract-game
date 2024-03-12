@@ -1,0 +1,1278 @@
+basePath: /
+definitions:
+  cicada_web-service-gin_req-res-models.PlayerScore:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      gameid:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      score:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  cicada_web-service-gin_req-res-models.Pool:
+    properties:
+      Poolli:
+        items:
+          $ref: '#/definitions/cicada_web-service-gin_req-res-models.Poolli'
+        type: array
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      gameStatus:
+        type: string
+      gameid:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  cicada_web-service-gin_req-res-models.Poolli:
+    properties:
+      Owners:
+        items:
+          type: string
+        type: array
+      PoolID:
+        type: string
+      Value:
+        type: number
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  controllers.DeployRequest:
+    properties:
+      beneficiary:
+        type: string
+      initialOwner:
+        type: string
+      network:
+        type: integer
+    required:
+    - beneficiary
+    - initialOwner
+    type: object
+  controllers.DeployResponse:
+    properties:
+      contractAddress:
+        type: string
+      transactionHash:
+        type: string
+    required:
+    - contractAddress
+    type: object
+  controllers.DepositETHRequest:
+    properties:
+      amount:
+        type: string
+      contract:
+        type: string
+      network:
+        type: integer
+      refundee:
+        type: string
+      sender:
+        type: string
+    required:
+    - contract
+    - refundee
+    - sender
+    type: object
+  controllers.DepositETHResponse:
+    properties:
+      unsignedHash:
+        type: string
+    type: object
+  controllers.DepositTokenRequest:
+    properties:
+      amount:
+        type: string
+      contract:
+        type: string
+      network:
+        type: integer
+      refundee:
+        type: string
+      sender:
+        type: string
+      symbol:
+        type: string
+      tokenAddress:
+        type: string
+    required:
+    - contract
+    - refundee
+    - sender
+    - tokenAddress
+    type: object
+  controllers.DepositTokenResponse:
+    properties:
+      state:
+        type: string
+      unsignedHash:
+        type: string
+    type: object
+  controllers.TransactionHashResponse:
+    properties:
+      transactionHash:
+        type: string
+    type: object
+  controllers.WhitelistTokenRequest:
+    properties:
+      contract:
+        type: string
+      network:
+        type: integer
+      symbol:
+        type: string
+      tokenAddress:
+        type: string
+    required:
+    - contract
+    - tokenAddress
+    type: object
+  controllers.WithdrawRequest:
+    properties:
+      contract:
+        type: string
+      network:
+        type: integer
+      payee:
+        type: string
+    required:
+    - contract
+    - payee
+    type: object
+  controllers.WithdrawTokenRequest:
+    properties:
+      contract:
+        type: string
+      network:
+        type: integer
+      payee:
+        type: string
+      symbol:
+        type: string
+    required:
+    - contract
+    - payee
+    type: object
+  models.AllWinners:
+    properties:
+      winnners:
+        items:
+          $ref: '#/definitions/models.Winner'
+        type: array
+    type: object
+  models.CreatePoolResponse:
+    properties:
+      gameID:
+        type: string
+      poolID:
+        type: string
+      poollis:
+        items:
+          $ref: '#/definitions/models.PoolResponse'
+        type: array
+    type: object
+  models.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  models.GameRequest:
+    properties:
+      playerScore:
+        items:
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            score:
+              type: integer
+          type: object
+        type: array
+      players:
+        items:
+          properties:
+            amount:
+              type: number
+            id:
+              type: string
+            name:
+              type: string
+          type: object
+        type: array
+    type: object
+  models.Player:
+    properties:
+      amount:
+        type: number
+      name:
+        type: string
+    type: object
+  models.PlayerScoreResponse:
+    properties:
+      gameid:
+        type: string
+      playersScore:
+        items:
+          $ref: '#/definitions/cicada_web-service-gin_req-res-models.PlayerScore'
+        type: array
+    type: object
+  models.Players:
+    properties:
+      players:
+        items:
+          $ref: '#/definitions/models.Player'
+        type: array
+    type: object
+  models.PlayersScore:
+    properties:
+      gameid:
+        type: string
+      playersScore:
+        items:
+          $ref: '#/definitions/cicada_web-service-gin_req-res-models.PlayerScore'
+        type: array
+    type: object
+  models.PoolResponse:
+    properties:
+      id:
+        type: string
+      owners:
+        items:
+          type: string
+        type: array
+      value:
+        type: number
+    type: object
+  models.PoolToSort:
+    properties:
+      poolID:
+        type: string
+      pooliis:
+        items:
+          $ref: '#/definitions/models.Poollis'
+        type: array
+    type: object
+  models.Poollis:
+    properties:
+      id:
+        type: string
+      owners:
+        items:
+          type: string
+        type: array
+      poolID:
+        type: string
+      value:
+        type: number
+    type: object
+  models.Winner:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      not_shared_amount:
+        type: number
+      pools_won_id:
+        items:
+          type: string
+        type: array
+      shared_amount:
+        type: number
+      total_amount:
+        type: number
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: cicada REST API description
+  title: cicada REST API
+  version: "2.0"
+paths:
+  /escrow/beneficiary-wd-token/{chosenTable}/{network}/{contractAddress}/{symbol}:
+    get:
+      consumes:
+      - application/json
+      description: Transfer specified token symbol to beneficiary.
+      parameters:
+      - description: Chosen Table
+        in: path
+        name: chosenTable
+        required: true
+        type: string
+      - description: network
+        in: path
+        name: network
+        required: true
+        type: string
+      - description: contract address
+        in: path
+        name: contractAddress
+        required: true
+        type: string
+      - description: symbol
+        in: path
+        name: symbol
+        required: true
+        type: string
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TransactionHashResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: BeneficiaryWithdrawToken
+      tags:
+      - contracts
+  /escrow/beneficiary-withdraw/{chosenTable}/{network}/{contractAddress}:
+    get:
+      consumes:
+      - application/json
+      description: Transfer asset to beneficiary.
+      parameters:
+      - description: Chosen Table
+        in: path
+        name: chosenTable
+        required: true
+        type: string
+      - description: network
+        in: path
+        name: network
+        required: true
+        type: string
+      - description: contract address
+        in: path
+        name: contractAddress
+        required: true
+        type: string
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TransactionHashResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: BeneficiaryWithdraw
+      tags:
+      - contracts
+  /escrow/close/{chosenTable}/{network}/{contractAddress}:
+    get:
+      consumes:
+      - application/json
+      description: Changes state of contract to closed.
+      parameters:
+      - description: Chosen Table
+        in: path
+        name: chosenTable
+        required: true
+        type: string
+      - description: network
+        in: path
+        name: network
+        required: true
+        type: string
+      - description: contract address
+        in: path
+        name: contractAddress
+        required: true
+        type: string
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TransactionHashResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: Close
+      tags:
+      - contracts
+  /escrow/deploy:
+    post:
+      consumes:
+      - application/json
+      description: Used for contract deployment.
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Deploy Request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.DeployRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.DeployResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: DeployContract
+      tags:
+      - contracts
+  /escrow/deposit-eth:
+    post:
+      consumes:
+      - application/json
+      description: Used for depositing ETH.
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Deposit ETH
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.DepositETHRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.DepositETHResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: DepositETH
+      tags:
+      - contracts
+  /escrow/deposit-token:
+    post:
+      consumes:
+      - application/json
+      description: Used for depositing token.
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Deposit token
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.DepositTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.DepositTokenResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: DepositToken
+      tags:
+      - contracts
+  /escrow/enableRefunds/{network}/{contractAddress}:
+    get:
+      consumes:
+      - application/json
+      description: Changes state of contract to refund.
+      parameters:
+      - description: network
+        in: path
+        name: network
+        required: true
+        type: string
+      - description: contract address
+        in: path
+        name: contractAddress
+        required: true
+        type: string
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TransactionHashResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: EnableRefunds
+      tags:
+      - contracts
+  /escrow/isWhitelisted/{network}/{contractAddress}/{symbol}:
+    get:
+      consumes:
+      - application/json
+      description: Checks if token symbol is whitelisted.
+      parameters:
+      - description: network
+        in: path
+        name: network
+        required: true
+        type: string
+      - description: contract address
+        in: path
+        name: contractAddress
+        required: true
+        type: string
+      - description: symbol
+        in: path
+        name: symbol
+        required: true
+        type: string
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TransactionHashResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: BeneficiaryWithdraw
+      tags:
+      - contracts
+  /escrow/whitelist/{chosenTable}:
+    post:
+      consumes:
+      - application/json
+      description: To whitelist a token by symbol.
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: WhitelistToken Request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.WhitelistTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TransactionHashResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: WhitelistToken
+      tags:
+      - contracts
+  /escrow/withdraw:
+    post:
+      consumes:
+      - application/json
+      description: Transfer asset to payee.
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Withdraw eth
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.WithdrawRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TransactionHashResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: Withdraw
+      tags:
+      - contracts
+  /escrow/withdraw-token:
+    post:
+      consumes:
+      - application/json
+      description: Transfer asset to payee.
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Withdraw token
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.WithdrawTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TransactionHashResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: WithdrawToken
+      tags:
+      - contracts
+  /play/get-winners/{gameid}:
+    get:
+      consumes:
+      - application/json
+      description: get winners with their won amount based on the provided gameid.
+      parameters:
+      - description: gameid
+        in: path
+        name: gameid
+        required: true
+        type: string
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AllWinners'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: get winners with their won amount  by gameid
+      tags:
+      - Play
+  /play/winners:
+    post:
+      consumes:
+      - application/json
+      description: identify winners from  the given player using thier scores.
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Player data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.GameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AllWinners'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: identify winners from  the given player using thier scores.
+      tags:
+      - Play
+  /player/create-player-score:
+    post:
+      consumes:
+      - application/json
+      description: Registers players with their scores.
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Player score data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayersScore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PlayerScoreResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: Registers players with their scores.
+      tags:
+      - Player Scores
+  /player/get-player-scores/{gameid}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves player scores based on the provided game ID.
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameid
+        required: true
+        type: string
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PlayerScoreResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: Get player scores by game ID
+      tags:
+      - Player Scores
+  /player/update-player-score/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update player score based on the provided ID.
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Request Body
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/cicada_web-service-gin_req-res-models.PlayerScore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cicada_web-service-gin_req-res-models.PlayerScore'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: Update player score by ID
+      tags:
+      - Player Scores
+  /player/update-player/{gameid}:
+    put:
+      consumes:
+      - application/json
+      description: Update player scores based on the provided gameid.
+      parameters:
+      - description: gameid
+        in: path
+        name: gameid
+        required: true
+        type: string
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Request Body
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/cicada_web-service-gin_req-res-models.PlayerScore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PlayersScore'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: Update PlayersScore by gameid
+      tags:
+      - Player Scores
+  /pool/create-pool:
+    post:
+      consumes:
+      - application/json
+      description: Registers pool with their poollis.
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Player data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.Players'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CreatePoolResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: Registers pool with their poollis.
+      tags:
+      - Pools
+  /pool/delete-pool/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete pool with poollis  based on the provided pool ID.
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: Delete pool with poollis by pool ID
+      tags:
+      - Pools
+  /pool/get-all-pools:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all pools.
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/cicada_web-service-gin_req-res-models.Pool'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: Get all pools with their poolis.
+      tags:
+      - Pools
+  /pool/get-pool/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get pool with poollis  based on the provided pool ID.
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cicada_web-service-gin_req-res-models.Pool'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: get pool with poollis by pool ID
+      tags:
+      - Pools
+  /pool/get-poollis/{poolID}/{player}:
+    get:
+      consumes:
+      - application/json
+      description: get all poollis a player is in  based on the provided player and
+        poolID.
+      parameters:
+      - description: player
+        in: path
+        name: player
+        required: true
+        type: string
+      - description: poolID
+        in: path
+        name: poolID
+        required: true
+        type: string
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/cicada_web-service-gin_req-res-models.Poolli'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: get all poollis a player is in
+      tags:
+      - Pools
+  /pool/sort-pool:
+    post:
+      consumes:
+      - application/json
+      description: sort pool with number of owners based on the provided poolli Data.
+      parameters:
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Player data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.PoolToSort'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PoolToSort'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: sort pool with number of owners
+      tags:
+      - Pools
+  /pool/update-pool/{id}:
+    put:
+      consumes:
+      - application/json
+      description: updates pool based on the provided id.
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 'Bearer '
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Request Body
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/cicada_web-service-gin_req-res-models.Pool'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cicada_web-service-gin_req-res-models.Pool'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - bearer: []
+      summary: updates pool by id
+      tags:
+      - Pools
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

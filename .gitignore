@@ -1,0 +1,5 @@
+.env
+/env
+/test/test1.go
+tmp
+/test-encrypt
